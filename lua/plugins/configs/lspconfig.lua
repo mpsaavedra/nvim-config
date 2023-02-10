@@ -1,4 +1,10 @@
 local present, lspconfig = pcall(require, "lspconfig")
+local pid = vim.fn.getpid()
+local omnisharp_bin = "../omnisharp/OmniSharp"
+
+if vim.fn.has 'win32' == 1 then
+  omnisharp_bin = "c:\\lsp-servers\\omnisharp\\OmniSharp.exe"
+end
 
 if not present then
   return
@@ -62,6 +68,22 @@ lspconfig.sumneko_lua.setup {
       },
     },
   },
+}
+
+lspconfig.omnisharp.setup {
+    on_attach = M.on_attach,
+    capabilities = M.capabilities,
+    cmd = { omnisharp_bin, "--languageserver" , "--hostPID", tostring(pid) }
+}
+
+lspconfig.tsserver.setup {
+    on_attach = M.on_attach,
+    capabilities = M.capabilities
+}
+
+lspconfig.vuels.setup {
+    on_attach = M.on_attach,
+    capabilities = M.capabilities
 }
 
 return M

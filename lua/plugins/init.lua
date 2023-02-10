@@ -203,6 +203,11 @@ local plugins = {
       require("core.utils").load_mappings "whichkey"
     end,
   },
+
+  ["Omnisharp/omnisharp-vim"] = {
+    --module = "omnisharp"
+  },
+
 }
 
 -- Load all plugins
