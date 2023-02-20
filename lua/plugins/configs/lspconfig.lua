@@ -1,9 +1,11 @@
 local present, lspconfig = pcall(require, "lspconfig")
 local pid = vim.fn.getpid()
 local omnisharp_bin = "../omnisharp/OmniSharp"
+local netcoredbg = "../netcoredbg/netcoredbg/netcoredbg"
 
 if vim.fn.has 'win32' == 1 then
   omnisharp_bin = "c:\\lsp-servers\\omnisharp\\OmniSharp.exe"
+  netcoredbg = "C:\\lsp-servers\\netcoredbg\\netcoredbg.exe"
 end
 
 if not present then
@@ -84,6 +86,14 @@ lspconfig.tsserver.setup {
 lspconfig.vuels.setup {
     on_attach = M.on_attach,
     capabilities = M.capabilities
+}
+
+--:slocal dap = require("dap")
+
+lspconfig.netcoredbg.setup {
+    on_attach = M.on_attach,
+    capabilities = M.capabilities,
+    cmd = {  }
 }
 
 return M
