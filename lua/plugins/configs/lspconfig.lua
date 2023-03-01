@@ -1,11 +1,13 @@
 local present, lspconfig = pcall(require, "lspconfig")
 local pid = vim.fn.getpid()
 local omnisharp_bin = "../omnisharp/OmniSharp"
-local netcoredbg = "../netcoredbg/netcoredbg/netcoredbg"
+local netcoredbg_bin = "../netcoredbg/netcoredbg/netcoredbg"
+local vls_bin = "../vue-language-server/vue-language-server"
 
 if vim.fn.has 'win32' == 1 then
   omnisharp_bin = "c:\\lsp-servers\\omnisharp\\OmniSharp.exe"
-  netcoredbg = "C:\\lsp-servers\\netcoredbg\\netcoredbg.exe"
+  netcoredbg_bin = "C:\\lsp-servers\\netcoredbg\\netcoredbg.exe"
+  vls_bin = "C:\\lsp-servers\\vue-language-server\\node_modules\\.bin\\vue-language-server.cmd"
 end
 
 if not present then
@@ -83,17 +85,35 @@ lspconfig.tsserver.setup {
     capabilities = M.capabilities
 }
 
-lspconfig.vuels.setup {
-    on_attach = M.on_attach,
-    capabilities = M.capabilities
-}
-
---:slocal dap = require("dap")
-
-lspconfig.netcoredbg.setup {
+lspconfig.volar.setup {
     on_attach = M.on_attach,
     capabilities = M.capabilities,
-    cmd = {  }
+    cmd = { "cmd", "/C", vls_bin, "--stdio" },
+    args = { "--stdio" }
 }
+
+local dap = require("dap")
+dap.adapters.coreclr = {
+    type = "executable",
+    name = "launch - netcoredbg",
+    command = netcoredbg_bin,
+    args = { "--interpreter=vscode" }
+}
+
+dap.configurations.cs = {
+    {
+        type = "coreclr",
+        name = "launch - netcoredbg",
+        request = "launch",
+        program = function()
+            return vim.fn.input('Path to DLL > ', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+        end,
+    },
+}
+-- lspconfig.dap.setup {
+--     on_attach = M.on_attach,
+--     capabilities = M.capabilities,
+--     cmd = {  }
+-- }
 
 return M
