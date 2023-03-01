@@ -104,6 +104,13 @@ local plugins = {
     end,
   },
 
+  ["jay-babu/mason-nvim-dap.nvim"] = {
+    after = "mason",
+    setup = function ()
+      require "plugins.configs.dap"
+    end
+  },
+
   ["neovim/nvim-lspconfig"] = {
     opt = true,
     setup = function()
